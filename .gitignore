@@ -1,0 +1,7 @@
+.venv/
+venv/
+.env
+
+src/database.db
+src/analyzer_data.py
+data/
