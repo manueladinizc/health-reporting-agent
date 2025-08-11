@@ -4,6 +4,9 @@ from sqlalchemy import create_engine
 import concurrent.futures
 from typing import List
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # URLs from https://opendatasus.saude.gov.br/dataset/srag-2021-a-2024
 CSV_URLS = [
@@ -20,7 +23,7 @@ COLUMNS = ['DT_SIN_PRI', 'EVOLUCAO', 'UTI', 'VACINA_COV', 'VACINA', 'CLASSI_FIN'
 
 def load_data_from_url(url: str) -> pd.DataFrame:
     """Loads and processes data from a URL."""
-    print(f"Carregando: {url}")
+    logger.info(f"Loading: {url}")
     start = time.time()
     
     df = pd.read_csv(
@@ -52,15 +55,15 @@ def load_data_from_url(url: str) -> pd.DataFrame:
     df['DT_SIN_PRI_DATETIME'] = dt_temp.dt.date
 
     elapsed = time.time() - start
-    print(f"{url.split('/')[-1]}: {len(df)} rows loaded in {elapsed:.2f}s")
+    logger.info(f"{url.split('/')[-1]}: {len(df)} rows loaded in {elapsed:.2f}s")
     return df
 
 def load_multiple_from_urls(urls: List[str]) -> pd.DataFrame:
     """Loads multiple CSVs in parallel and concatenates them."""
-    print("Loading all datasets in parallel...")
+    logger.info("Loading all datasets in parallel...")
     start = time.time()
     dataframes = []
-    
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=min(4, len(urls))) as executor:
         future_to_url = {executor.submit(load_data_from_url, url): url for url in urls}
         for future in concurrent.futures.as_completed(future_to_url):
@@ -68,19 +71,19 @@ def load_multiple_from_urls(urls: List[str]) -> pd.DataFrame:
                 df = future.result()
                 dataframes.append(df)
             except Exception as exc:
-                print(f"[ERROR] Loading error {future_to_url[future]}: {exc}")
+                logger.error(f"Loading error {future_to_url[future]}: {exc}")
 
     if not dataframes:
         raise Exception("No datasets were loaded.")
     
     df_final = pd.concat(dataframes, ignore_index=True)
     elapsed = time.time() - start
-    print(f"Total: {len(df_final)} rows loaded in {elapsed:.2f}s")
+    logger.info(f"Total: {len(df_final)} rows loaded in {elapsed:.2f}s")
     return df_final
 
 def save_to_sqlite(df: pd.DataFrame, db_path: str, table: str):
     """Saves DataFrame to SQLite database."""
-    print(f"Saving to database {db_path} ...")
+    logger.info(f"Saving to database {db_path} ...")
     start = time.time()
     
     engine = create_engine(f"sqlite:///{db_path}", echo=False)
@@ -94,7 +97,7 @@ def save_to_sqlite(df: pd.DataFrame, db_path: str, table: str):
     )
     
     elapsed = time.time() - start
-    print(f"Database created at: {db_path} ({elapsed:.2f}s)")
+    logger.info(f"Database created at: {db_path} ({elapsed:.2f}s)")
 
 if __name__ == "__main__":
     df_final = load_multiple_from_urls(CSV_URLS)
