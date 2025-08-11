@@ -8,5 +8,6 @@ venv/
 .env
 
 src/database.db
+
 src/analyzer_data.py
-data/
+test_metrics_tools.py
