@@ -29,55 +29,238 @@ class MetricsTool:
 
 
 
-    def get_case_increase_rate(self) -> Dict[str, Any]:
+    def get_month_case_increase_rate(self) -> Dict[str, Any]:
         """
-        Calculates the percentage increase in case counts between the penultimate and antepenultimate months in the database.
-        The most recent month is always excluded from the calculation, as it may contain incomplete data.
-        The method ensures at least three months of data are available, and returns the growth rate, the months compared, and their respective case counts.
+        Calculate the percentage increase in case counts between the last two complete months.
+
+        Ignores the most recent month (which may be incomplete).
+
+        Returns:
+            dict: {
+                "current_month": (year, month),
+                "latest_cases": int,
+                "compared_month": (year, month),
+                "previous_cases": int,
+                "percent_increase_rate": float or None
+            }
         """
         query = """
-        with available_months as (
-            select distinct ano, mes
+        with cases_per_month as (
+            select
+                ano as year,
+                mes as month,
+                count(*) as total_cases
             from srag_table
-            order by ano desc, mes desc
-            limit 3
+            group by ano, mes
         ),
-        recent_month_cases as (
-            select s.ano, s.mes, count(*) as cases
-            from srag_table s
-            join available_months am on s.ano = am.ano and s.mes = am.mes
-            group by s.ano, s.mes
-            order by s.ano desc, s.mes desc
+        ordered as (
+            select *
+            from cases_per_month
+            order by year desc, month desc
         )
-        select * from recent_month_cases;
+        select *
+        from ordered
+        limit -1 offset 1;
         """
 
         df = self.execute_query(query)
-        if df.empty or len(df) < 3:
-            return {"Error": "Insufficient data to calculate rate between penultimate and antepenultimate months."}
 
-        # Sort from most recent to oldest (year, month descending)
-        df = df.sort_values(by=["ano", "mes"], ascending=False).reset_index(drop=True)
+        if df.empty or len(df) < 2:
+            logger.warning("Insufficient data to calculate the increase rate.")
+            return {}
 
-        # Discard the most recent month (row 0) and reset the index
-        df = df.iloc[1:].reset_index(drop=True)  # now rows 0 and 1 are penultimate and antepenultimate months
+        df = df.sort_values(by=["year", "month"], ascending=False).head(2)
 
-        cases_penultimate_month = int(df.loc[0, 'cases'])
-        penultimate_month = f"{df.loc[0, 'ano']}-{df.loc[0, 'mes']:02d}"
+        latest_cases = df.iloc[0]["total_cases"]
+        previous_cases = df.iloc[1]["total_cases"]
 
-        cases_antepenultimate_month = int(df.loc[1, 'cases'])
-        antepenultimate_month = f"{df.loc[1, 'ano']}-{df.loc[1, 'mes']:02d}"
-
-        if cases_antepenultimate_month == 0:
-            growth_rate = None
+        if previous_cases == 0:
+            logger.warning("Previous month has zero cases, cannot calculate rate.")
+            percent_increase_rate = None
         else:
-            growth_rate = ((cases_penultimate_month - cases_antepenultimate_month) / cases_antepenultimate_month) * 100
+            percent_increase_rate = ((latest_cases - previous_cases) / previous_cases) * 100
 
-        return {
-            "growth_rate_percent": round(growth_rate, 2) if growth_rate is not None else None,
-            "penultimate_month": penultimate_month,
-            "cases_penultimate_month": cases_penultimate_month,
-            "antepenultimate_month": antepenultimate_month,
-            "cases_antepenultimate_month": cases_antepenultimate_month,
-            "months_analyzed": len(df)
+        result = {
+            "current_month": (int(df.iloc[0]["year"]), int(df.iloc[0]["month"])),
+            "latest_cases": int(latest_cases),
+            "compared_month": (int(df.iloc[1]["year"]), int(df.iloc[1]["month"])),
+            "previous_cases": int(previous_cases),
+            "percent_increase_rate": percent_increase_rate
         }
+
+        logger.info(f"Increase rate calculated: {percent_increase_rate:.4f}")
+        return result
+
+    def get_month_mortality_rate(self) -> Dict[str, Any]:
+        """
+        Calculate the mortality rate (EVOLUCAO = 2) for the last complete month.
+
+        Ignores the most recent month (which may be incomplete).
+
+        Returns:
+            dict: {
+                "year": int,
+                "month": int,
+                "total_cases": int,
+                "total_deaths": int,
+                "mortality_rate": float or None
+            }
+        """
+        query = """
+        with cases_per_month as (
+            select
+                ano as year,
+                mes as month,
+                count(*) as total_cases,
+                sum(case when evolucao = 2 then 1 else 0 end) as total_deaths
+            from srag_table
+            group by ano, mes
+        ),
+        ordered as (
+            select *
+            from cases_per_month
+            order by year desc, month desc
+        )
+        select *
+        from ordered
+        limit 1 offset 1;
+        """
+
+        df = self.execute_query(query)
+
+        if df.empty:
+            logger.warning("Insufficient data to calculate the mortality rate for the last complete month.")
+            return {}
+
+        row = df.iloc[0]
+        total_cases = row["total_cases"]
+        total_deaths = row["total_deaths"]
+
+        mortality_rate = ((total_deaths / total_cases) * 100) if total_cases > 0 else None
+
+        result = {
+            "year": int(row["year"]),
+            "month": int(row["month"]),
+            "total_cases": int(total_cases),
+            "total_deaths": int(total_deaths),
+            "mortality_rate": mortality_rate
+        }
+
+        logger.info(f"Mortality rate for the last complete month ({result['year']}-{result['month']}): {mortality_rate}")
+        return result
+
+    def get_month_uti_occupancy_rate(self) -> Dict[str, Any]:
+        """
+        Calculate the ICU (UTI) occupancy rate for the last complete month.
+
+        Ignores the most recent month (which may be incomplete).
+
+        Returns:
+            dict: {
+                "year": int,
+                "month": int,
+                "total_cases": int,
+                "total_uti_cases": int,
+                "uti_occupancy_rate_percent": float or None
+            }
+        """
+        query = """
+        with cases_per_month as (
+            select
+                ano as year,
+                mes as month,
+                count(*) as total_cases,
+                sum(case when uti = 1 then 1 else 0 end) as total_uti_cases
+            from srag_table
+            group by ano, mes
+        ),
+        ordered as (
+            select *
+            from cases_per_month
+            order by year desc, month desc
+        )
+        select *
+        from ordered
+        limit 1 offset 1;
+        """
+
+        df = self.execute_query(query)
+
+        if df.empty:
+            logger.warning("Insufficient data to calculate the ICU occupancy rate for the last complete month.")
+            return {}
+
+        row = df.iloc[0]
+        total_cases = row["total_cases"]
+        total_uti_cases = row["total_uti_cases"]
+
+        occupancy_rate = (total_uti_cases / total_cases * 100) if total_cases > 0 else None
+
+        result = {
+            "year": int(row["year"]),
+            "month": int(row["month"]),
+            "total_cases": int(total_cases),
+            "total_uti_cases": int(total_uti_cases),
+            "uti_occupancy_rate_percent": round(occupancy_rate, 2) if occupancy_rate is not None else None
+        }
+
+        logger.info(f"ICU occupancy rate for the last complete month ({result['year']}-{result['month']}): {result['uti_occupancy_rate_percent']}%")
+        return result
+
+    def get_month_covid_vaccination_rate(self) -> Dict[str, Any]:
+        """
+        Calculate the COVID vaccination rate (VACINA_COV = 1) for the last complete month.
+
+        Ignores the most recent month (which may be incomplete).
+
+        Returns:
+            dict: {
+                "year": int,
+                "month": int,
+                "total_cases": int,
+                "total_vaccinated": int,
+                "covid_vaccination_rate_percent": float or None
+            }
+        """
+        query = """
+        with cases_per_month as (
+            select
+                ano as year,
+                mes as month,
+                count(*) as total_cases,
+                sum(case when vacina_cov = 1 then 1 else 0 end) as total_vaccinated
+            from srag_table
+            group by ano, mes
+        ),
+        ordered as (
+            select *
+            from cases_per_month
+            order by year desc, month desc
+        )
+        select *
+        from ordered
+        limit 1 offset 1;
+        """
+
+        df = self.execute_query(query)
+
+        if df.empty:
+            logger.warning("Insufficient data to calculate the COVID vaccination rate for the last complete month.")
+            return {}
+
+        row = df.iloc[0]
+        total_cases = row["total_cases"]
+        total_vaccinated = row["total_vaccinated"]
+
+        vaccination_rate = (total_vaccinated / total_cases * 100) if total_cases > 0 else None
+
+        result = {
+            "year": int(row["year"]),
+            "month": int(row["month"]),
+            "total_cases": int(total_cases),
+            "total_vaccinated": int(total_vaccinated),
+            "covid_vaccination_rate_percent": round(vaccination_rate, 2) if vaccination_rate is not None else None
+        }
+
+        logger.info(f"COVID vaccination rate for the last complete month ({result['year']}-{result['month']}): {result['covid_vaccination_rate_percent']}%")
+        return result
