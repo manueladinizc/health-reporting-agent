@@ -1,2 +1,9 @@
 pandas
 sqlalchemy
+jinja2
+matplotlib
+seaborn
+requests
+python-dotenv
+python-dateutil
+langgraph
