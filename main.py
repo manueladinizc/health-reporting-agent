@@ -7,6 +7,7 @@ sys.path.append(str(Path(__file__).parent / "src"))
 
 from data_loader import load_multiple_from_urls, save_to_sqlite, CSV_URLS, SQLITE_DB, TABLE_NAME
 from utils.logs import setup_logging
+from graph_workflow import run_graph
 
 setup_logging()
 
@@ -27,4 +28,7 @@ def prepare_database():
 		logger.info(f"Database already exists at {SQLITE_DB}.")
 
 if __name__ == "__main__":
+	logger.info("Iniciando pipeline de geração de relatório SRAG...")
 	prepare_database()
+	run_graph()
+	logger.info("Pipeline finalizado! Relatório JSON e HTML gerados em /reports.")
