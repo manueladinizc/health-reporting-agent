@@ -62,7 +62,6 @@ class VisualizationTool:
         ax.collections[0].set_edgecolor(self.line_color)
         ax.set_xlabel("Data")
         ax.set_ylabel("Número de Casos")
-        ax.set_title(f"Casos Diários de SRAG - Últimos {days} dias")
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
         output_path = self.output_dir / "daily_cases.png"
@@ -102,7 +101,6 @@ class VisualizationTool:
         sns.barplot(x='month_year', y='cases', data=df, ax=ax)
         ax.set_xlabel("Ano-Mês")
         ax.set_ylabel("Número de Casos")
-        ax.set_title(f"Casos Mensais de SRAG - Últimos {months} meses")
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
         output_path = self.output_dir / "monthly_cases.png"

@@ -204,7 +204,7 @@ class MetricsTool:
             "uti_occupancy_rate_percent": round(occupancy_rate, 2) if occupancy_rate is not None else None
         }
 
-        logger.info(f"ICU occupancy rate for the last complete month ({result['year']}-{result['month']}): {result['uti_occupancy_rate_percent']}%")
+        logger.info(f"UTI occupancy rate for the last complete month ({result['year']}-{result['month']}): {result['uti_occupancy_rate_percent']}%")
         return result
 
     def get_month_covid_vaccination_rate(self) -> Dict[str, Any]:
