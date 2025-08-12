@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Saúde em Tempo Real - Indicium HealthCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e9ecef;
+        }
+        .report-container {
+            background-color: #ffffff;
+            max-width: 1200px;
+        }
+        .header-top-bar {
+            background-color: #0d47a1;
+        }
+        .section-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+        .divider-srag { background-color: #e65100; }
+        .divider-sentinela { background-color: #1565c0; }
+
+        .metric-card {
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+        }
+        .metric-card .value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+        .metric-card .label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 0.25rem;
+        }
+        .metric-card .title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-placeholder {
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            color: #adb5bd;
+        }
+        .report-analysis {
+            background-color: #fffbeb;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+        }
+        .report-analysis h3 {
+            color: #b45309;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="report-container mx-auto p-6 shadow-lg">
+
+        <!-- Cabeçalho -->
+        <header class="text-center border-b-4 border-yellow-400 pb-4">
+            <div class="header-top-bar h-2 mb-4"></div>
+            <p class="text-xl font-bold text-gray-700">INFORME</p>
+            <h1 class="text-3xl md:text-4xl font-black text-gray-800 my-1">Síndrome Respiratória Aguda Grave (SRAG)</h1>
+            <p class="text-md text-gray-600">Relatório Epidemiológico Automatizado</p>
+            <p class="text-sm text-gray-500">Indicium HealthCare Inc.</p>
+            <div class="mt-4 bg-blue-800 text-white font-bold inline-block px-6 py-2 rounded-md">
+                Análise Mensal — Julho de 2025
+            </div>
+        </header>
+
+        <!-- Seção Principal de Métricas SRAG -->
+        <section class="my-8">
+            <div class="grid grid-cols-5 items-center gap-4">
+                
+                <!-- Coluna da Esquerda com 2 Métricas -->
+                <div class="col-span-2 space-y-4">
+                    <div class="metric-card">
+                        <h3 class="title"><i class="fas fa-chart-line text-orange-500"></i> Taxa de Aumento de Casos</h3>
+                        <p class="value text-orange-500">{{ report.metrics.case_increase_rate.percent_increase_rate|round(2) }}%</p>
+                        <p class="label">Comparativo com período anterior</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3 class="title"><i class="fas fa-procedures text-purple-600"></i> Taxa de Ocupação de UTI</h3>
+                        <p class="value text-purple-600">{{ report.metrics.uti_occupancy_rate.uti_occupancy_rate_percent }}%</p>
+                        <p class="label">Leitos de UTI ocupados</p>
+                    </div>
+                </div>
+
+                <!-- Divisor Central -->
+                <div class="col-span-1 text-center">
+                    <div class="section-divider divider-srag">SRAG</div>
+                </div>
+
+                <!-- Coluna da Direita com 2 Métricas -->
+                <div class="col-span-2 space-y-4">
+                    <div class="metric-card">
+                        <h3 class="title"><i class="fas fa-skull-crossbones text-red-600"></i> Taxa de Mortalidade</h3>
+                        <p class="value text-red-600">{{ report.metrics.mortality_rate.mortality_rate|round(2) }}%</p>
+                        <p class="label">Letalidade da doença no período</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3 class="title"><i class="fas fa-syringe text-blue-600"></i> Taxa de Vacinação</h3>
+                        <p class="value text-blue-600">{{ report.metrics.vaccination_rate.covid_vaccination_rate_percent }}%</p>
+                        <p class="label">População alvo vacinada</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Análise Gerada pela IA -->
+        <section>
+          <div class="report-analysis">
+              <h3>Análise do Cenário Atual</h3>
+              <p class="text-gray-700">{{ report.executive_summary }}</p>
+          </div>
+        </section>
+
+        <!-- Seção de Gráficos -->
+        <section class="my-8">
+            <div class="section-divider divider-sentinela">Visualização de Dados Históricos</div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-4 rounded-lg shadow-inner">
+                    <h3 class="font-bold text-center text-lg mb-4">Número Diário de Casos (Últimos 30 dias)</h3>
+                    <div class="chart-placeholder"><img src="charts/daily_cases.png" alt="Gráfico diário" style="max-width:100%;"></div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-inner">
+                    <h3 class="font-bold text-center text-lg mb-4">Número Mensal de Casos (Últimos 12 meses)</h3>
+                    <div class="chart-placeholder"><img src="charts/monthly_cases.png" alt="Gráfico mensal" style="max-width:100%;"></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
