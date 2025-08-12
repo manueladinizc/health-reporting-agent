@@ -1,0 +1,42 @@
+import os
+import json
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader
+from typing import Any, Dict
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+REPORTS_DIR = PROJECT_ROOT / "reports"
+TEMPLATES_DIR = PROJECT_ROOT / "src" / "template"
+HTML_OUTPUT = REPORTS_DIR / "srag_report.html"
+
+def get_latest_report_json() -> str:
+    """Find the most recent srag_report_*.json in the reports directory."""
+    json_files = list(REPORTS_DIR.glob("srag_report_*.json"))
+    if not json_files:
+        raise FileNotFoundError("Nenhum arquivo de relatório JSON encontrado.")
+    latest_file = max(json_files, key=os.path.getctime)
+    return str(latest_file)
+
+def load_report_data(json_path: str) -> Dict[str, Any]:
+    """Load report data from a JSON file."""
+    with open(json_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def render_html_report(data: dict, template_name: str = "report.html") -> str:
+    """Render the HTML report using Jinja2."""
+    env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)))
+    template = env.get_template(template_name)
+    return template.render(report=data)
+
+def save_html_report(html_content: str, output_path: str = str(HTML_OUTPUT)):
+    """Save the rendered HTML to the reports directory."""
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    print(f"Relatório HTML salvo em: {output_path}")
+
+if __name__ == '__main__':
+    latest_json = get_latest_report_json()
+    data = load_report_data(latest_json)
+    html = render_html_report(data)
+    save_html_report(html)
