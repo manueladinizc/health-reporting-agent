@@ -23,7 +23,7 @@ def generate_summary_metrics(metrics, news_analysis):
         f"{json.dumps(metrics, ensure_ascii=False, indent=2)}\n"
         "NOTÍCIAS:\n"
         f"{news_summary}\n"
-        "Resuma em até 10 linhas, em português."
+        "Resuma em até 20 linhas, em português."
     )
     if openai_api_key:
         try:
@@ -70,14 +70,14 @@ def generate_summary_charts(news_analysis, charts):
     prompt = (
         "Analise as datas e conteúdos das notícias abaixo e compare com as tendências descritas nos gráficos diários e mensais.\n"
         "Diga se as tendências dos gráficos coincidem com o que está sendo relatado nas notícias (ex: aumento ou queda de casos em determinado mês/ano).\n"
-        "Destaque convergências ou divergências relevantes para a vigilância epidemiológica.\n"
+        "Destaque convergências ou divergências relevantes para o relatório epidemiológica.\n"
         "NOTÍCIAS:\n"
         f"{news_summary}\n"
         "GRÁFICO DIÁRIO:\n"
         f"{daily_desc}\n"
         "GRÁFICO MENSAL:\n"
         f"{monthly_desc}\n"
-        "Resuma em até 10 linhas, em português."
+        "Resuma em até 20 linhas, em português."
     )
     if openai_api_key:
         try:
@@ -119,12 +119,12 @@ def generate_executive_summary(summary_metrics, summary_charts):
     """
     openai_api_key = os.getenv("OPENAI_API_KEY")
     prompt = (
-        "Com base nos dois resumos abaixo (um sobre métricas e notícias, outro sobre análise de gráficos e notícias), escreva um resumo executivo final, comentando sobre o todo, destacando riscos, alertas e recomendações para gestores públicos.\n"
+        "Com base nos dois resumos abaixo (um sobre métricas e notícias, outro sobre análise de gráficos e notícias), escreva um resumo executivo final, comentando sobre o todo, destacando riscos e alertas  para gestores públicos.\n"
         "RESUMO MÉTRICAS/NOTÍCIAS:\n"
         f"{summary_metrics}\n"
         "RESUMO GRÁFICOS/NOTÍCIAS:\n"
         f"{summary_charts}\n"
-        "Resuma em até 20 linhas, em português."
+        "Resuma em até 15 linhas, em português."
     )
     if openai_api_key:
         try:
