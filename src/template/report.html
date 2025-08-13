@@ -20,24 +20,27 @@
             background-color: #0d47a1;
         }
         .section-divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block;
             color: white;
             font-weight: bold;
             font-size: 1.5rem;
-            padding: 0.75rem;
+            padding: 0.60rem 0.8rem;
             border-radius: 0.5rem;
         }
         .divider-srag { background-color: #e65100; }
         .divider-sentinela { background-color: #1565c0; }
 
         .metric-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
             border: 1px solid #e2e8f0;
             border-radius: 0.75rem;
             padding: 1rem;
             background-color: #f8f9fa;
+            min-height: 180px;
         }
         .metric-card .value {
             font-size: 2.5rem;
@@ -67,14 +70,14 @@
             color: #adb5bd;
         }
         .report-analysis {
-            background-color: #fffbeb;
-            border-left: 5px solid #f59e0b;
+            background-color: #d3e0f8;
+            border-left: 5px solid #215de0;
             padding: 1.5rem;
             border-radius: 0.5rem;
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
         .report-analysis h3 {
-            color: #b45309;
+            color: #1565c0;
             font-weight: 700;
             font-size: 1.25rem;
             margin-bottom: 1rem;
@@ -89,7 +92,7 @@
         <header class="text-center border-b-4 border-yellow-400 pb-4">
             <div class="header-top-bar h-2 mb-4"></div>
             <p class="text-xl font-bold text-gray-700">INFORME</p>
-            <h1 class="text-3xl md:text-4xl font-black text-gray-800 my-1">Síndrome Respiratória Aguda Grave (SRAG)</h1>
+            <h1 class="text-lg md:text-3xl font-black text-gray-700 my-1">Síndrome Respiratória Aguda Grave (SRAG)</h1>
             <p class="text-md text-gray-600">Relatório Epidemiológico Automatizado</p>
             <p class="text-sm text-gray-500">Indicium HealthCare Inc.</p>
             <div class="mt-4 bg-blue-800 text-white font-bold inline-block px-6 py-2 rounded-md">
@@ -98,8 +101,8 @@
         </header>
 
         <!-- Seção Principal de Métricas SRAG -->
-        <section class="my-8">
-            <div class="grid grid-cols-5 items-center gap-4">
+        <section class="my-3">
+            <div class="grid grid-cols-5 items-center gap-0">
                 
                 <!-- Coluna da Esquerda com 2 Métricas -->
                 <div class="col-span-2 space-y-4">
@@ -117,7 +120,7 @@
 
                 <!-- Divisor Central -->
                 <div class="col-span-1 text-center">
-                    <div class="section-divider divider-srag">SRAG</div>
+                    <div style="text-align:center;"><span class="section-divider divider-srag">SRAG</span></div>
                 </div>
 
                 <!-- Coluna da Direita com 2 Métricas -->
@@ -145,8 +148,10 @@
         </section>
 
         <!-- Seção de Gráficos -->
-        <section class="my-8">
-            <div class="section-divider divider-sentinela">Visualização de Dados Históricos</div>
+        <section class="my-8" style="page-break-before: always;">
+            <div style="text-align:center; width:100%; margin-bottom:2rem;">
+                <span class="section-divider divider-sentinela">Visualização de Dados Históricos</span>
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white p-4 rounded-lg shadow-inner">
                     <h3 class="font-bold text-center text-lg mb-4">Número Diário de Casos (Últimos 30 dias)</h3>
