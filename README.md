@@ -10,7 +10,7 @@ O pipeline realiza:
 - Busca de notícias recentes sobre SRAG.
 - Geração de gráficos históricos.
 - Síntese e explicação do cenário por IA generativa.
-- Geração automática de relatório em HTML e JSON.
+- Geração automática de relatório em HTML e PDF.
 
 ## Estrutura do Projeto
 
@@ -26,7 +26,11 @@ health-reporting-agent/
 │   ├── template/         # Template HTML do relatório
 │   ├── data_loader.py    # Download e ingestão dos dados
 │   ├── graph_workflow.py # Orquestrador LangGraph
-├── reports/              # Relatórios gerados (não versionados)
+├── resources/
+│   ├── charts/           # Gráficos gerados
+│   ├── json/             # Relatórios JSON gerados
+│   ├── reports/          # Relatórios HTML e PDF gerados
+│   └── diagram/          # Diagramas conceituais
 ```
 
 ## Como Configurar
@@ -51,10 +55,9 @@ health-reporting-agent/
 
 4. **Configure as variáveis de ambiente:**
 	- Copie `.env.example` para `.env` e preencha com suas chaves:
-	  ```
-	  OPENAI_API_KEY=...
-	  SERPER_API_KEY=...
-	  ```
+		```bash
+		cp .env.example .env
+		```
 
 5. **Execute o pipeline:**
 	```bash
@@ -62,7 +65,7 @@ health-reporting-agent/
 	```
 
 6. **Acesse o relatório:**
-	- O relatório HTML será gerado em `reports/srag_report.html`.
+		- O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
 
 ## O que o projeto faz?
 
@@ -75,4 +78,4 @@ health-reporting-agent/
 
 - Os dados são baixados automaticamente do DATASUS.
 - As chaves de API são necessárias para uso de IA e busca de notícias.
-- A pasta `reports/` é criada automaticamente e não é versionada.
+- As pastas dentro de `resources/` são criadas automaticamente e não são versionadas.

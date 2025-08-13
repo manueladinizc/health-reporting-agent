@@ -13,7 +13,7 @@ class VisualizationTool:
 
     def __init__(self, db_path: str = "src/database.db"):
         self.db_path = db_path
-        self.output_dir = Path("reports/charts")
+        self.output_dir = Path("resources/charts")
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self._setup_style()
 

@@ -5,13 +5,14 @@ from jinja2 import Environment, FileSystemLoader
 from typing import Any, Dict
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-REPORTS_DIR = PROJECT_ROOT / "reports"
+REPORTS_DIR = PROJECT_ROOT / "resources" / "reports"
+JSON_DIR = PROJECT_ROOT / "resources" / "json"
 TEMPLATES_DIR = PROJECT_ROOT / "src" / "template"
 HTML_OUTPUT = REPORTS_DIR / "srag_report.html"
 
 def get_latest_report_json() -> str:
-    """Find the most recent srag_report_*.json in the reports directory."""
-    json_files = list(REPORTS_DIR.glob("srag_report_*.json"))
+    """Find the most recent srag_report_*.json in the resources/json directory."""
+    json_files = list(JSON_DIR.glob("srag_report_*.json"))
     if not json_files:
         raise FileNotFoundError("Nenhum arquivo de relatório JSON encontrado.")
     latest_file = max(json_files, key=os.path.getctime)
@@ -29,7 +30,7 @@ def render_html_report(data: dict, template_name: str = "report.html") -> str:
     return template.render(report=data)
 
 def save_html_report(html_content: str, output_path: str = str(HTML_OUTPUT)):
-    """Save the rendered HTML to the reports directory."""
+    """Save the rendered HTML to the resources/reports directory."""
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_content)

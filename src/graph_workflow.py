@@ -101,11 +101,11 @@ def node_generate_pdf(state):
     """Generates the PDF report from the HTML file."""
     logger.info("=== STEP 7: PDF GENERATION ===")
     try:
-        html_path = Path(__file__).parent.parent / 'reports' / 'srag_report.html'
-        pdf_path = Path(__file__).parent.parent / 'reports' / 'srag_report.pdf'
+        html_path = Path(__file__).parent.parent / 'resources' / 'reports' / 'srag_report.html'
+        pdf_path = Path(__file__).parent.parent / 'resources' / 'reports' / 'srag_report.pdf'
         if html_path.exists():
             asyncio.run(generate_pdf(str(html_path), str(pdf_path)))
-            logger.info("PDF generated successfully at /reports/srag_report.pdf.")
+            logger.info("PDF generated successfully at /resources/srag_report.pdf.")
         else:
             logger.error(f"HTML file not found: {html_path}")
     except Exception as e:

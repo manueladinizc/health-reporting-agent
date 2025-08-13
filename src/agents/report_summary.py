@@ -18,7 +18,7 @@ class ReportSummaryAgent:
     def run(self, metrics: dict, news_analysis: dict, charts: dict, save_json: bool = False) -> dict:
         """
         Generates summary_metrics, summary_charts, and executive_summary.
-        If save_json=True, saves the report in reports/srag_report_<date>.json
+        If save_json=True, saves the report in resources/json/srag_report_<date>.json
         """
         summary_metrics = generate_summary_metrics(metrics, news_analysis)
         summary_charts = generate_summary_charts(news_analysis, charts)
@@ -43,12 +43,12 @@ class ReportSummaryAgent:
 
 def save_report_json(report: dict) -> str:
     """
-    Saves the report as JSON in the reports folder and returns the file path.
+    Saves the report as JSON in the resources/json folder and returns the file path.
     """
-    reports_dir = Path("reports")
-    reports_dir.mkdir(exist_ok=True)
+    json_dir = Path("resources/json")
+    json_dir.mkdir(parents=True, exist_ok=True)
     filename = f"srag_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    report_path = reports_dir / filename
+    report_path = json_dir / filename
     with open(report_path, 'w', encoding='utf-8') as f:
         json.dump(report, f, indent=2, ensure_ascii=False, default=str)
     return str(report_path)
@@ -57,7 +57,7 @@ def save_report_json(report: dict) -> str:
 def run_report_summary_agent(metrics: dict, news_analysis: dict, charts: dict, save_json: bool = False) -> dict:
     """
     Runs the report summary agent and returns the results.
-    If save_json=True, saves the report in reports/.
+    If save_json=True, saves the report in resources/json/.
     """
     agent = ReportSummaryAgent()
     return agent.run(metrics, news_analysis, charts, save_json=save_json)

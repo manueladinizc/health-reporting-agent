@@ -12,5 +12,7 @@ src/database.db
 
 src/analyzer_data.py
 test_tools.py
-reports/
+resources/json
+resources/charts
+resources/reports
 notes.md

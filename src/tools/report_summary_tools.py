@@ -135,7 +135,7 @@ def generate_executive_summary(summary_metrics, summary_charts):
         f"{summary_metrics}\n"
         "RESUMO GRÁFICOS/NOTÍCIAS:\n"
         f"{summary_charts}\n"
-        "Responda em português, em formato de texto corrido (sem tópicos ou listas), com no máximo 15 linhas."
+        "Responda em português, em formato de texto corrido (sem tópicos ou listas), com no máximo 12 linhas."
     )
     if openai_api_key:
         try:
@@ -193,7 +193,7 @@ def assemble_report(state):
     report["summary_charts"] = summary_charts
     report["executive_summary"] = executive_summary
 
-    report_path = f"reports/health_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    report_path = f"resources/json/srag_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     with open(report_path, 'w', encoding='utf-8') as f:
         json.dump(report, f, indent=2, ensure_ascii=False, default=str)
     report["report_path"] = report_path
