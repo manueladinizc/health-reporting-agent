@@ -9,16 +9,16 @@ from pathlib import Path
 
 class ReportSummaryAgent:
     """
-    Agente de Resumo de Relatório: gera sumários e resumo executivo a partir dos resultados dos agentes de métricas, visualização e notícias.
-    Pode ser usado como nó em um grafo LangGraph ou isoladamente.
+    Report Summary Agent: generates summaries and executive summary from the results of the metrics, visualization, and news agents.
+    Can be used as a node in a LangGraph or standalone.
     """
     def __init__(self):
         pass
 
     def run(self, metrics: dict, news_analysis: dict, charts: dict, save_json: bool = False) -> dict:
         """
-        Gera summary_metrics, summary_charts e executive_summary.
-        Se save_json=True, salva o relatório em reports/srag_report_<data>.json
+        Generates summary_metrics, summary_charts, and executive_summary.
+        If save_json=True, saves the report in reports/srag_report_<date>.json
         """
         summary_metrics = generate_summary_metrics(metrics, news_analysis)
         summary_charts = generate_summary_charts(news_analysis, charts)
@@ -43,7 +43,7 @@ class ReportSummaryAgent:
 
 def save_report_json(report: dict) -> str:
     """
-    Salva o relatório como JSON na pasta reports e retorna o caminho do arquivo.
+    Saves the report as JSON in the reports folder and returns the file path.
     """
     reports_dir = Path("reports")
     reports_dir.mkdir(exist_ok=True)
@@ -56,17 +56,8 @@ def save_report_json(report: dict) -> str:
 
 def run_report_summary_agent(metrics: dict, news_analysis: dict, charts: dict, save_json: bool = False) -> dict:
     """
-    Executa o agente de resumo de relatório e retorna os resultados.
-    Se save_json=True, salva o relatório em reports/.
+    Runs the report summary agent and returns the results.
+    If save_json=True, saves the report in reports/.
     """
     agent = ReportSummaryAgent()
     return agent.run(metrics, news_analysis, charts, save_json=save_json)
-
-
-if __name__ == "__main__":
-    # Exemplo de uso (substitua pelos resultados reais dos outros agentes)
-    metrics = {"case_increase_rate": {}, "mortality_rate": {}, "uti_occupancy_rate": {}, "vaccination_rate": {}}
-    news_analysis = {"summary": "", "articles": []}
-    charts = {"daily_cases_chart": {}, "monthly_cases_chart": {}}
-    output = run_report_summary_agent(metrics, news_analysis, charts, save_json=True)
-    print("Resultado do ReportSummaryAgent:\n", output)

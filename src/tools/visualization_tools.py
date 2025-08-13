@@ -9,7 +9,7 @@ from typing import Optional, Dict, Any
 logger = logging.getLogger(__name__)
 
 class VisualizationTool:
-    """Ferramenta para gerar gráficos e visualizações a partir dos dados."""
+    """Tool to generate charts and visualizations from data."""
 
     def __init__(self, db_path: str = "src/database.db"):
         self.db_path = db_path
@@ -18,7 +18,7 @@ class VisualizationTool:
         self._setup_style()
 
     def _setup_style(self):
-        """Configura o estilo padrão para os gráficos do Seaborn."""
+        """Set up the default style for Seaborn charts."""
         self.sns_style = "darkgrid"
         self.sns_style_params = {"grid.color": ".5", "grid.linestyle": ":"}
         self.colors = ["#001F3F", "#AAAAAA", "#334C66", "#7099A8", "#D8D8D8"]
@@ -27,36 +27,33 @@ class VisualizationTool:
 
     def execute_query(self, query: str, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
         """
-        Executa uma consulta SQL parametrizada e retorna um DataFrame.
-        Usar parâmetros previne SQL Injection.
+        Execute a parameterized SQL query and return a DataFrame.
+        Using parameters prevents SQL Injection.
         """
         try:
             with sqlite3.connect(self.db_path) as conn:
                 df = pd.read_sql_query(query, conn, params=params)
-                logger.info(f"Query executada com sucesso. Retornou {len(df)} linhas.")
+                logger.info(f"Query executed successfully. Returned {len(df)} rows.")
                 return df
         except Exception as e:
-            logger.error(f"Erro ao executar a query: {e}")
+            logger.error(f"Error executing query: {e}")
             return pd.DataFrame()
 
     def _save_and_close_plot(self, fig, filename: str) -> Path:
-        """Salva a figura do gráfico e a fecha para liberar memória."""
+        """Save the chart figure and close it to free memory."""
         output_path = self.output_dir / filename
         plt.tight_layout()
         fig.savefig(output_path)
         plt.close(fig)
-        logger.info(f"Gráfico salvo em: {output_path}")
+        logger.info(f"Chart saved at: {output_path}")
         return output_path
 
     def create_daily_cases_chart(self, days: int = 30) -> Dict[str, Any]:
         """
-        Gera um gráfico de casos diários para os N dias que antecedem o
-        último mês completo com dados.
+        Generate a daily cases chart for the N days preceding the last full month with data.
         """
-        logger.info(f"Iniciando gráfico de casos diários dos últimos {days} dias.")
-        
-        # A query agora faz todo o trabalho de cálculo de datas,
-        # eliminando a necessidade de uma consulta preliminar.
+        logger.info(f"Starting daily cases chart for the last {days} days.")
+
         query = """
             WITH MaxDate AS (
                 SELECT MAX(DT_SIN_PRI_DATETIME) as value FROM srag_table
@@ -75,14 +72,14 @@ class VisualizationTool:
             GROUP BY date
             ORDER BY date;
         """
-        
-        # Usamos parâmetros para segurança e clareza
+
+
         params = {"days_interval": f"-{days - 1} days"}
         df = self.execute_query(query, params=params)
 
         if df.empty or len(df) < 2:
-            logger.warning("Dados insuficientes para gerar o gráfico de casos diários.")
-            return {"error": "Dados insuficientes para gerar o gráfico."}
+            logger.warning("Insufficient data to generate daily cases chart.")
+            return {"error": "Insufficient data to generate chart."}
 
         df['date'] = pd.to_datetime(df['date'])
 
@@ -92,7 +89,7 @@ class VisualizationTool:
         if len(df) >= 7:
             df['media_movel'] = df['cases'].rolling(window=7, min_periods=1).mean()
             ax.plot(df['date'], df['media_movel'], color='gray', linewidth=2, label='Média Móvel (7 dias)')
-            logger.info("Média móvel de 7 dias adicionada.")
+            logger.info("7-day moving average added.")
 
         ax.set_xlabel("Data")
         ax.set_ylabel("Número de Casos")
@@ -113,11 +110,11 @@ class VisualizationTool:
 
     def create_monthly_cases_chart(self, months: int = 12) -> Dict[str, Any]:
         """
-        Gera um gráfico de casos mensais para os últimos N meses completos.
+        Generate a monthly cases chart for the last N complete months.
         """
-        logger.info(f"Iniciando gráfico de casos mensais dos últimos {months} meses.")
-        
-        # Query simplificada para buscar todos os meses completos e depois filtrar os últimos N
+        logger.info(f"Starting monthly cases chart for the last {months} months.")
+
+        # Simplified query to fetch all complete months and then filter the last N
         query = """
             SELECT
                 STRFTIME('%Y-%m', DT_SIN_PRI_DATETIME) as month_year,
@@ -128,12 +125,12 @@ class VisualizationTool:
             ORDER BY month_year;
         """
         df_all_months = self.execute_query(query)
-        
-        if df_all_months.empty or len(df_all_months) < 2:
-            logger.warning("Dados insuficientes para gerar o gráfico mensal.")
-            return {"error": "Dados insuficientes (mínimo 2 meses completos)."}
 
-        # Filtra os últimos N meses no pandas, o que é mais simples
+        if df_all_months.empty or len(df_all_months) < 2:
+            logger.warning("Insufficient data to generate monthly chart.")
+            return {"error": "Insufficient data (minimum 2 complete months)."}
+
+        # Filter the last N months in pandas, which is simpler
         df = df_all_months.tail(months).copy()
         
         fig, ax = plt.subplots(figsize=(8, 4))
@@ -141,10 +138,10 @@ class VisualizationTool:
         ax.set_xlabel("Ano-Mês")
         ax.set_ylabel("Número de Casos")
         plt.xticks(rotation=45, ha='right')
-        
+
         output_path = self._save_and_close_plot(fig, "monthly_cases.png")
 
         data_list = df.to_dict(orient='records')
         description = f"Casos mensais para os últimos {len(df)} meses completos."
-        
+
         return {"image_path": str(output_path), "data": data_list, "description": description}

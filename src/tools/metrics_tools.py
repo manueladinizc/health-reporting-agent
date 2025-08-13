@@ -1,7 +1,6 @@
 import sqlite3
 import pandas as pd
 from typing import Dict, Any
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from src.utils.logs import setup_logging
