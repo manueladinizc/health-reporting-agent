@@ -4,6 +4,8 @@ from src.agents.visualization import VisualizationAgent
 from src.agents.news_search import NewsSearchAgent
 from src.agents.report_summary import run_report_summary_agent
 from src.utils.report_render import render_html_report, save_html_report, get_latest_report_json, load_report_data
+from src.utils.pdf_render import generate_pdf
+import asyncio
 from langgraph.graph import StateGraph, END
 
 logger = logging.getLogger("health_graph")
@@ -70,21 +72,39 @@ def node_render_html(state):
     return state
 
 
+def node_generate_pdf(state):
+    try:
+        from pathlib import Path
+        html_path = Path(__file__).parent.parent / 'reports' / 'srag_report.html'
+        pdf_path = Path(__file__).parent.parent / 'reports' / 'srag_report.pdf'
+        if html_path.exists():
+            asyncio.run(generate_pdf(str(html_path), str(pdf_path)))
+            logger.info("PDF gerado com sucesso em /reports/srag_report.pdf.")
+        else:
+            logger.error(f"Arquivo HTML não encontrado: {html_path}")
+    except Exception as e:
+        logger.error(f"Erro ao gerar PDF: {e}")
+    return state
+
+
 
 
 def create_graph():
     graph = StateGraph(None)
+
     graph.add_node("metrics", node_metrics)
     graph.add_node("visualization", node_visualization)
     graph.add_node("news", node_news)
     graph.add_node("report_summary", node_report_summary)
     graph.add_node("render_html", node_render_html)
+    graph.add_node("generate_pdf", node_generate_pdf)
 
     graph.add_edge("metrics", "visualization")
     graph.add_edge("visualization", "news")
     graph.add_edge("news", "report_summary")
     graph.add_edge("report_summary", "render_html")
-    graph.add_edge("render_html", END)
+    graph.add_edge("render_html", "generate_pdf")
+    graph.add_edge("generate_pdf", END)
 
     graph.set_entry_point("metrics")
     return graph
