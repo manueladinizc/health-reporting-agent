@@ -21,8 +21,8 @@ COLUMNS = [
     'VACINA', 'CLASSI_FIN', 'SEM_PRI'
 ]
 
-EXPECTED_FILES = [
-    "INFLUD25-08-08-2025.csv",
+LOCAL_FILES = [
+    "INFLUD25-04-08-2025.csv",
     "INFLUD24-26-06-2025.csv"
 ]
 
@@ -115,7 +115,7 @@ def get_data_sources() -> (List[str], bool):
     Returns a list of sources and whether they are local or URLs.
     Prioritizes local files if all exist.
     """
-    local_paths = [os.path.join(DATA_DIR, f) for f in EXPECTED_FILES]
+    local_paths = [os.path.join(DATA_DIR, f) for f in LOCAL_FILES]
     if all(os.path.isfile(p) for p in local_paths):
         logger.info("Found all expected local CSV files. Using local sources.")
         return local_paths, True
