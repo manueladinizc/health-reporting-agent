@@ -10,4 +10,4 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
 	logger.info("Starting SRAG report generation pipeline...")
 	run_graph()
-	logger.info("Pipeline finished! JSON, HTML, and PDF reports generated in /reports.")
+	logger.info("=== PIPELINE FINISHED! PDF report generated in resources/reports ===")

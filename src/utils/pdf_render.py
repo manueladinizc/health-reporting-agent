@@ -13,8 +13,3 @@ async def generate_pdf(html_path, pdf_path):
         await page.pdf(path=str(pdf_path), format="A4", print_background=True)
         await browser.close()
     print(f"PDF salvo em: {pdf_path}")
-
-if __name__ == '__main__':
-    html_path = Path(__file__).parent.parent.parent / 'resources' / 'reports' / 'srag_report.html'
-    pdf_path = Path(__file__).parent.parent.parent / 'resources' / 'reports' / 'srag_report.pdf'
-    asyncio.run(generate_pdf(str(html_path), str(pdf_path)))

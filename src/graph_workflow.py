@@ -145,7 +145,3 @@ def run_graph():
     compiled_graph = graph.compile()
     result = compiled_graph.invoke(state)
     return result
-
-
-if __name__ == "__main__":
-    run_graph()

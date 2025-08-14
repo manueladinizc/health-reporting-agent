@@ -35,9 +35,3 @@ def save_html_report(html_content: str, output_path: str = str(HTML_OUTPUT)):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
     print(f"Relatório HTML salvo em: {output_path}")
-
-if __name__ == '__main__':
-    latest_json = get_latest_report_json()
-    data = load_report_data(latest_json)
-    html = render_html_report(data)
-    save_html_report(html)

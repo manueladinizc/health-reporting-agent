@@ -98,7 +98,3 @@ def save_to_sqlite(df: pd.DataFrame, db_path: str, table: str):
     
     elapsed = time.time() - start
     logger.info(f"Database created at: {db_path} ({elapsed:.2f}s)")
-
-if __name__ == "__main__":
-    df_final = load_multiple_from_urls(CSV_URLS)
-    save_to_sqlite(df_final, SQLITE_DB, TABLE_NAME)
