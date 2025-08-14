@@ -16,4 +16,5 @@ resources/json
 resources/charts
 resources/reports
 notes.md
-data/
+data/data/INFLUD25-04-08-2025.csv
+data/INFLUD24-26-06-2025.csv
