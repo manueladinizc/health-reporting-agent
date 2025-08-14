@@ -11,7 +11,7 @@ from src.agents.news_search import NewsSearchAgent
 from src.agents.report_summary import run_report_summary_agent
 from src.utils.report_render import render_html_report, save_html_report, get_latest_report_json, load_report_data
 from src.utils.pdf_render import generate_pdf
-from src.data_loader import load_multiple_from_urls, save_to_sqlite, CSV_URLS, SQLITE_DB, TABLE_NAME
+from src.data_loader import load_data, SQLITE_DB
 
 logger = logging.getLogger("health_graph")
 
@@ -21,8 +21,7 @@ def node_prepare_database(state):
     logger.info("=== STEP 1: DATABASE SETUP ===")
     if not os.path.exists(SQLITE_DB):
         logger.info(f"Database not found at {SQLITE_DB}. Creating database...")
-        df_final = load_multiple_from_urls(CSV_URLS)
-        save_to_sqlite(df_final, SQLITE_DB, TABLE_NAME)
+        load_data()
         logger.info("Database created.")
     else:
         logger.info(f"Database already exists at {SQLITE_DB}.")
