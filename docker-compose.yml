@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  health-agent:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./resources:/app/resources
+      - ./data:/app/data
+  command: tail -f /dev/null
