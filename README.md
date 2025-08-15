@@ -122,6 +122,8 @@ cp .env.example .env
 	docker compose down
 	```
 
+- **Obs.:** Use `docker compose` (espaço) ou `docker-compose` (hífen), conforme sua versão do Docker.
+
 OU
 
 - **Localmente:**
