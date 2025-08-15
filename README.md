@@ -2,11 +2,12 @@
 # Health Reporting Agent — Indicium HealthCare
 
 
-Geração de relatórios epidemiológicos sobre SRAG com dados do Open DATASUS, análise de notícias em tempo real (SERPER API) e explicações por IA (OpenAI). Pipeline modular, geração de gráficos, HTML e PDF.
+Pipeline modular para geração automática de relatórios epidemiológicos sobre SRAG, integrando dados do DATASUS, análise de notícias em tempo real (SERPER API) e explicações com IA. Inclui cálculo de métricas mensais, geração de gráficos e orquestração por agentes (LangGraph).
 
-**Principais recursos:** download e tratamento de dados, métricas mensais, busca de notícias, relatórios automáticos, orquestração por agentes (LangGraph).
+**Recursos:** 
 
 - [Diagrama Conceitual](resources/diagram/conceptual_diagram.png)
+- [Video com demonstração da execução do projeto](https://www.youtube.com/watch?v=l0P43MMDugk)
 
 
 ## Sumário
@@ -17,7 +18,7 @@ Geração de relatórios epidemiológicos sobre SRAG com dados do Open DATASUS, 
 5. [Configuração e Execução](#configuração-e-execução)
 
 
-## Visão Geral e Funcionalidades
+## 1. Visão Geral e Funcionalidades
 
 - Download e tratamento de dados do Open DATASUS
 - Cálculo de métricas mensais (casos, óbitos, UTI, vacinação)
@@ -26,7 +27,7 @@ Geração de relatórios epidemiológicos sobre SRAG com dados do Open DATASUS, 
 - Geração de gráficos, HTML e PDF
 
 
-## Detalhes do Projeto
+## 2. Detalhes do Projeto
 
 Os dados utilizados neste projeto são provenientes do DATASUS ([link para o dataset](https://opendatasus.saude.gov.br/dataset/srag-2021-a-2024)), abrangendo internações por Síndrome Respiratória Aguda Grave (SRAG) nos anos de 2024 e 2025 (até 04/08/2025). Os arquivos CSV podem ser baixados diretamente pelos links:
 
@@ -40,7 +41,7 @@ A execução do `main.py` aciona toda a pipeline, que é orquestrada por um graf
 Ao final do processamento, os resultados são salvos em arquivos JSON, que alimentam um template HTML. Este HTML é então convertido automaticamente em PDF, gerando o relatório final.
 
 
-## Tratamento dos dados
+## 3. Tratamento dos dados
 
 Para esta análise, foram selecionadas as seguintes colunas do dataset SRAG:
 
@@ -61,7 +62,7 @@ Para o cálculo das métricas:
 - **Vacinação COVID-19**: Considera-se VACINA_COV = 1.
 
 
-## Estrutura do Projeto
+## 4. Estrutura do Projeto
 
 ```
 health-reporting-agent/
@@ -85,7 +86,7 @@ health-reporting-agent/
 ```
 
 
-## Configuração e Execução
+## 5. Configuração e Execução
 
 **Pré-requisitos:**
 - Python 3.11+
