@@ -100,7 +100,7 @@ cd health-reporting-agent
 ```
 
 **2. Configure as variáveis de ambiente:**
-Copie `.env.example` para `.env` e preencha com suas chaves:
+
 ```bash
 cp .env.example .env
 # Edite o arquivo .env com suas chaves
@@ -116,7 +116,7 @@ cp .env.example .env
 	python main.py
 	```
 	
-**Para parar e remover o container:**
+- **Parar e remover o container:**
 	```bash
 	exit
 	docker compose down
