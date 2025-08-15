@@ -2,7 +2,7 @@
 # Health Reporting Agent — Indicium HealthCare
 
 
-Pipeline modular para geração automática de relatórios epidemiológicos sobre SRAG, integrando dados do DATASUS, análise de notícias em tempo real (SERPER API) e explicações com IA. Inclui cálculo de métricas mensais, geração de gráficos e orquestração por agentes (LangGraph).
+Pipeline modular para geração automática de relatórios epidemiológicos sobre SRAG, integrando dados do Open DATASUS, análise de notícias em tempo real (SERPER API) e explicações com IA. Inclui cálculo de métricas mensais, geração de gráficos e orquestração por agentes (LangGraph).
 
 **Recursos:** 
 
