@@ -1,14 +1,21 @@
+
 import os
 import json
+import logging
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from typing import Any, Dict
+from .logs import setup_logging
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 REPORTS_DIR = PROJECT_ROOT / "resources" / "reports"
 JSON_DIR = PROJECT_ROOT / "resources" / "json"
 TEMPLATES_DIR = PROJECT_ROOT / "src" / "template"
 HTML_OUTPUT = REPORTS_DIR / "srag_report.html"
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 def get_latest_report_json() -> str:
     """Find the most recent srag_report_*.json in the resources/json directory."""
@@ -34,4 +41,4 @@ def save_html_report(html_content: str, output_path: str = str(HTML_OUTPUT)):
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
-    print(f"Relatório HTML salvo em: {output_path}")
+        logger.info(f"HTML saved at: {output_path}")

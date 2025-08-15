@@ -1,28 +1,29 @@
+
 # Health Reporting Agent — Indicium HealthCare
 
-## Recursos
 
-1. [Link para o Diagrama Conceitual](resources/diagram/conceptual_diagram.png)
+Geração de relatórios epidemiológicos sobre SRAG com dados do Open DATASUS, análise de notícias em tempo real (SERPER API) e explicações por IA (OpenAI). Pipeline modular, geração de gráficos, HTML e PDF.
+
+**Principais recursos:** download e tratamento de dados, métricas mensais, busca de notícias, relatórios automáticos, orquestração por agentes (LangGraph).
+
+- [Diagrama Conceitual](resources/diagram/conceptual_diagram.png)
+
 
 ## Sumário
-
-1. [Visão Geral](#visão-geral)
+1. [Visão Geral e Funcionalidades](#visão-geral-e-funcionalidades)
 2. [Detalhes do Projeto](#detalhes-do-projeto)
 3. [Tratamento dos Dados](#tratamento-dos-dados)
 4. [Estrutura do Projeto](#estrutura-do-projeto)
-5. [Como Configurar](#como-configurar)
+5. [Configuração e Execução](#configuração-e-execução)
 
-## Visão Geral
 
-Este projeto é uma solução automatizada para geração de relatórios epidemiológicos sobre Síndrome Respiratória Aguda Grave (SRAG), integrando dados reais do Open DATASUS, análise de notícias em tempo real e explicações geradas por IA. O sistema foi desenvolvido como parte da certificação AI Engineer by Indicium.
+## Visão Geral e Funcionalidades
 
-O pipeline realiza:
-- Extração e tratamento de dados SRAG do DATASUS.
-- Cálculo de métricas epidemiológicas mensais (taxa de aumento de casos, mortalidade, ocupação de UTI, vacinação).
-- Busca de notícias recentes sobre SRAG.
-- Geração de gráficos com o históricos dos casos de 30 dias e 12 meses.
-- Síntese e explicação do cenário por IA generativa.
-- Geração automática de relatório em HTML e PDF.
+- Download e tratamento de dados do Open DATASUS
+- Cálculo de métricas mensais (casos, óbitos, UTI, vacinação)
+- Busca de notícias em tempo real (SERPER API)
+- Explicações com auxílio por IA (OpenAI)
+- Geração de gráficos, HTML e PDF
 
 
 ## Detalhes do Projeto
@@ -32,7 +33,7 @@ Os dados utilizados neste projeto são provenientes do DATASUS ([link para o dat
 - [INFLUD25-04-08-2025.csv (2025)](https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/2025/INFLUD25-04-08-2025.csv)
 - [INFLUD24-26-06-2025.csv (2024)](https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/2024/INFLUD24-26-06-2025.csv)
 
-Por padrão, ao executar o arquivo `main.py`, a pipeline verifica se os arquivos CSV já estão presentes na pasta `data/`. O usuário pode optar por baixar manualmente esses arquivos e adicioná-los a essa pasta. Caso contrário, se os arquivos não estiverem presentes, a pipeline fará o download automaticamente das URLs acima. Após o download, os dados são processados e armazenados em um banco SQLite local.
+Ao executar o arquivo `main.py`, a pipeline verifica automaticamente se os arquivos CSV já existem na pasta `data/`. Caso não estejam presentes, o download será feito das URLs acima. Se preferir, você pode baixar manualmente os arquivos e colocá-los na pasta `data/` para agilizar a primeira execução e evitar o tempo de download. Após essa etapa, os dados são processados e armazenados em um banco SQLite local.
 
 A execução do `main.py` aciona toda a pipeline, que é orquestrada por um grafo de agentes (LangGraph). Cada agente é responsável por uma etapa específica: cálculo de métricas, geração de gráficos, busca de notícias e elaboração do resumo do relatório. Para a busca de notícias, foi utilizada a SERPER API, que se mostrou uma solução eficiente e prática para atender à necessidade de obtenção de notícias em tempo real nesta prova de conceito (PoC). O agente `ReportSummaryAgent` utiliza modelos de linguagem para interpretar os dados e as notícias, gerando explicações automáticas para o relatório.
 
@@ -83,92 +84,53 @@ health-reporting-agent/
 │   └── diagram/          # Diagramas conceituais
 ```
 
-## Como Configurar
 
-Para configurar este projeto, você precisará das seguintes chaves de API:
+## Configuração e Execução
 
-- **OpenAI API Key**: Necessária para utilizar os modelos de linguagem da OpenAI.
-- **SERPER API Key**: Necessária para realizar buscas de notícias em tempo real.
+**Pré-requisitos:**
+- Python 3.11+
+- OpenAI API Key ([crie aqui](https://platform.openai.com))
+- SERPER API Key ([crie aqui](https://serper.dev/))
+- (Recomandado) Docker e Docker Compose
 
-Você pode obter suas chaves nos seguintes urls:
+**1. Clone o repositório:**
+```bash
+git clone https://github.com/seu-usuario/health-reporting-agent.git
+cd health-reporting-agent
+```
 
-- [SERPER API](https://serper.dev/)
-- [OpenAI API](https://platform.openai.com)
+**2. Configure as variáveis de ambiente:**
+Copie `.env.example` para `.env` e preencha com suas chaves:
+```bash
+cp .env.example .env
+# Edite o arquivo .env com suas chaves
+```
 
-1. **Clone o repositório:**
-	```bash
-	git clone https://github.com/seu-usuario/health-reporting-agent.git
-	cd health-reporting-agent
-	```
+**3. Execute o pipeline:**
 
-
-## Como rodar com Docker
-
-1. **Configure as variáveis de ambiente:**
-	- Copie `.env.example` para `.env` e preencha com suas chaves:
-	  ```bash
-	  cp .env.example .env
-	  ```
-
-2. **Construa a imagem Docker:**
+- **Com Docker:**
 	```bash
 	docker compose build
-	```
-
-3. **Suba o container em background:**
-	```bash
 	docker compose up -d
-	```
-
-4. **Acesse o terminal do container:**
-	```bash
 	docker compose exec report-agent bash
-	```
-
-5. **Dentro do container, execute o pipeline manualmente:**
-	```bash
 	python main.py
 	```
-	Todas as mensagens de logger aparecerão no terminal do container.
-
-6. **Acesse o relatório:**
-	- O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
-
-7. **Para parar e remover o container:**
+	
+**Para parar e remover o container:**
 	```bash
 	exit
 	docker compose down
 	```
 
----
+OU
 
-
-## Como rodar localmente
-
-> ⚠️ É necessário ter Python 3.11 ou superior instalado.
-
-2. **Crie e ative um ambiente virtual:**
+- **Localmente:**
 	```bash
 	python3 -m venv .venv
 	source .venv/bin/activate
-	```
-
-3. **Instale as dependências:**
-	```bash
 	pip install -r requirements.txt
 	python -m playwright install
-	```
-
-4. **Configure as variáveis de ambiente:**
-	- Copie `.env.example` para `.env` e preencha com suas chaves:
-	  ```bash
-	  cp .env.example .env
-	  ```
-
-5. **Execute o pipeline:**
-	```bash
 	python main.py
 	```
 
-6. **Acesse o relatório:**
-	- O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
+O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
