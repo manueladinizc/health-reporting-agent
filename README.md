@@ -137,3 +137,4 @@ OU
 	```
 
 O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
+
