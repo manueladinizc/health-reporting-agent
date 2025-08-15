@@ -95,7 +95,7 @@ health-reporting-agent/
 
 **1. Clone o repositório:**
 ```bash
-git clone https://github.com/seu-usuario/health-reporting-agent.git
+git clone https://github.com/manueladinizc/health-reporting-agent.git
 cd health-reporting-agent
 ```
 

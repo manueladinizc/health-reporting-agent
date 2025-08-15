@@ -18,3 +18,5 @@ src/analyzer_data.py
 test_tools.py
 notes.md
 dict.pdf
+data/INFLUD25-04-08-2025.csv
+data/INFLUD24-26-06-2025.csv
