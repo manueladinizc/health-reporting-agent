@@ -1,10 +1,11 @@
 version: "3.8"
 services:
-  health-agent:
+  report-agent:
     build: .
+    image: report-agent
     env_file:
       - .env
     volumes:
       - ./resources:/app/resources
       - ./data:/app/data
-  command: tail -f /dev/null
+    command: tail -f /dev/null

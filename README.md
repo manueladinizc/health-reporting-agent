@@ -66,6 +66,8 @@ Para o cálculo das métricas:
 health-reporting-agent/
 ├── main.py
 ├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
 ├── .env.example
 ├── src/
 │   ├── agents/           # Agentes para métricas, visualização, notícias, resumo
@@ -99,6 +101,52 @@ Você pode obter suas chaves nos seguintes urls:
 	cd health-reporting-agent
 	```
 
+
+## Como rodar com Docker
+
+1. **Configure as variáveis de ambiente:**
+	- Copie `.env.example` para `.env` e preencha com suas chaves:
+	  ```bash
+	  cp .env.example .env
+	  ```
+
+2. **Construa a imagem Docker:**
+	```bash
+	docker compose build
+	```
+
+3. **Suba o container em background:**
+	```bash
+	docker compose up -d
+	```
+
+4. **Acesse o terminal do container:**
+	```bash
+	docker compose exec report-agent bash
+	```
+
+5. **Dentro do container, execute o pipeline manualmente:**
+	```bash
+	python main.py
+	```
+	Todas as mensagens de logger aparecerão no terminal do container.
+
+6. **Acesse o relatório:**
+	- O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
+
+7. **Para parar e remover o container:**
+	```bash
+	exit
+	docker compose down
+	```
+
+---
+
+
+## Como rodar localmente
+
+> ⚠️ É necessário ter Python 3.11 ou superior instalado.
+
 2. **Crie e ative um ambiente virtual:**
 	```bash
 	python3 -m venv .venv
@@ -113,9 +161,9 @@ Você pode obter suas chaves nos seguintes urls:
 
 4. **Configure as variáveis de ambiente:**
 	- Copie `.env.example` para `.env` e preencha com suas chaves:
-		```bash
-		cp .env.example .env
-		```
+	  ```bash
+	  cp .env.example .env
+	  ```
 
 5. **Execute o pipeline:**
 	```bash
@@ -123,4 +171,4 @@ Você pode obter suas chaves nos seguintes urls:
 	```
 
 6. **Acesse o relatório:**
-		- O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
+	- O relatório PDF será gerado em `resources/reports/srag_report.pdf`.
