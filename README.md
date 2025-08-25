@@ -6,7 +6,7 @@ Pipeline modular para geração automática de relatórios epidemiológicos sobr
 
 **Recursos:** 
 
-- [Diagrama Conceitual](resources/diagram/conceptual_diagram.png)
+- [Diagrama Conceitual](resources/diagram/concept_diagram.png)
 - [Video com demonstração da execução do projeto](https://www.youtube.com/watch?v=l0P43MMDugk)
 
 
